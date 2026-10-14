@@ -2,22 +2,14 @@
 
 # Copied w/ love from the excellent hypnoglow/helm-s3
 
+cd "$(dirname "$0")/.."
+
 if [ -n "${HELM_PUSH_PLUGIN_NO_INSTALL_HOOK}" ]; then
     echo "Development mode: not downloading versioned release."
     exit 0
 fi
 
-supported_helm_version="v2"
-
-helm_version="$(helm version --client| grep "Version" | cut -d '"' -f 2 | cut -d '.' -f 1)"
-
-if [ "$helm_version" != "$supported_helm_version" ]; then
-    echo "Error, this version of helm-push-artifactory-plugin is only for Helm $supported_helm_version"
-    echo "Please use --version v1.0.1 or higher to install the plugin"
-    exit 1
-fi
-
-echo "Installing plugin for Helm $supported_helm_version..."
+echo "Installing helm-push-artifactory plugin..."
 
 version="$(cat plugin.yaml | grep "version" | cut -d '"' -f 2)"
 echo "Downloading and installing helm-push-artifactory v${version} ..."

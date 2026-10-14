@@ -1,10 +1,42 @@
+apiVersion: v1
+type: cli/v1
+runtime: subprocess
 name: "push-artifactory"
 version: "0.4.2"
-usage: "Please see https://github.com/belitre/helm-push-artifactory-plugin for usage"
-description: "Push helm charts to artifactory"
-ignoreFlags: false
-useTunnel: false
-command: "$HELM_PLUGIN_DIR/bin/helm-push-artifactory"
-hooks:
-  install: "cd $HELM_PLUGIN_DIR; scripts/install_plugin.sh"
-  update: "cd $HELM_PLUGIN_DIR; scripts/install_plugin.sh"
+config:
+  usage: "push-artifactory"
+  shortHelp: "Push helm charts to artifactory"
+  longHelp: "Please see https://github.com/belitre/helm-push-artifactory-plugin for usage"
+  ignoreFlags: false
+runtimeConfig:
+  platformCommand:
+    - os: linux
+      arch: amd64
+      command: "$HELM_PLUGIN_DIR/bin/helm-push-artifactory"
+    - os: darwin
+      arch: amd64
+      command: "$HELM_PLUGIN_DIR/bin/helm-push-artifactory"
+    - os: darwin
+      arch: arm64
+      command: "$HELM_PLUGIN_DIR/bin/helm-push-artifactory"
+  platformHooks:
+    install:
+      - os: linux
+        arch: amd64
+        command: "$HELM_PLUGIN_DIR/scripts/install_plugin.sh"
+      - os: darwin
+        arch: amd64
+        command: "$HELM_PLUGIN_DIR/scripts/install_plugin.sh"
+      - os: darwin
+        arch: arm64
+        command: "$HELM_PLUGIN_DIR/scripts/install_plugin.sh"
+    update:
+      - os: linux
+        arch: amd64
+        command: "$HELM_PLUGIN_DIR/scripts/install_plugin.sh"
+      - os: darwin
+        arch: amd64
+        command: "$HELM_PLUGIN_DIR/scripts/install_plugin.sh"
+      - os: darwin
+        arch: arm64
+        command: "$HELM_PLUGIN_DIR/scripts/install_plugin.sh"

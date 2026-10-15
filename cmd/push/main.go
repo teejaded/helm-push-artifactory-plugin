@@ -15,7 +15,6 @@ import (
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/artifactory"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/helm"
 	"github.com/belitre/helm-push-artifactory-plugin/pkg/version"
-	helmpush "github.com/chartmuseum/helm-push/pkg/helm"
 	"github.com/spf13/cobra"
 )
 
@@ -124,16 +123,15 @@ func (p *pushCmd) setFieldsFromEnv() {
 }
 
 func (p *pushCmd) push() error {
-	var repo *helmpush.Repo
+	var entry *helm.RepoEntry
 	var err error
 
-	// If the argument looks like a URL, just create a temp repo object
-	// instead of looking for the entry in the local repository list
+	// If the argument looks like a URL, just use it directly.
+	// Otherwise look it up by name in the local helm repo config.
 	if regexp.MustCompile(`^https?://`).MatchString(p.repository) {
-		// Check valid URL
 		_, err = url.ParseRequestURI(p.repository)
 	} else {
-		repo, err = helmpush.GetRepoByName(p.repository)
+		entry, err = helm.GetRepoEntryByName(p.repository)
 	}
 
 	if err != nil {
@@ -154,22 +152,22 @@ func (p *pushCmd) push() error {
 		chart.OverrideValues(p.overrides)
 	}
 
-	if repo != nil {
-		p.repository = repo.URL
+	if entry != nil {
+		p.repository = entry.URL
 		if p.username == "" {
-			p.username = repo.Username
+			p.username = entry.Username
 		}
 		if p.password == "" {
-			p.password = repo.Password
+			p.password = entry.Password
 		}
 		if p.caFile == "" {
-			p.caFile = repo.CAFile
+			p.caFile = entry.CAFile
 		}
 		if p.certFile == "" {
-			p.certFile = repo.CertFile
+			p.certFile = entry.CertFile
 		}
 		if p.keyFile == "" {
-			p.keyFile = repo.KeyFile
+			p.keyFile = entry.KeyFile
 		}
 	}
 

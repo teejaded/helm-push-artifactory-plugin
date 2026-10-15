@@ -5,18 +5,15 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"k8s.io/helm/pkg/getter"
-	helm_env "k8s.io/helm/pkg/helm/environment"
-	"k8s.io/helm/pkg/helm/helmpath"
-	"k8s.io/helm/pkg/repo"
+	v3repo "helm.sh/helm/v3/pkg/repo"
 )
 
 var (
-	settings           helm_env.EnvSettings
 	testTarballPath    = "../../testdata/charts/mychart/mychart-0.1.0.tgz"
 	testCertPath       = "../../testdata/tls/test_cert.crt"
 	testKeyPath        = "../../testdata/tls/test_key.key"
@@ -43,30 +40,22 @@ func TestPushCmd(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	// Create new Helm home w/ test repo
+	// Create a temp helm repo config file with the test repo entry.
 	tmp, err := ioutil.TempDir("", "helm-push-test")
 	if err != nil {
 		t.Error("unexpected error creating temp test dir", err)
 	}
 	defer os.RemoveAll(tmp)
 
-	home := helmpath.Home(tmp)
-	f := repo.NewRepoFile()
-
-	entry := repo.Entry{}
-	entry.Name = "helm-push-test"
-	entry.URL = ts.URL
-
-	_, err = repo.NewChartRepository(&entry, getter.All(settings))
-	if err != nil {
-		t.Error("unexpected error created test repository", err)
+	repoFile := filepath.Join(tmp, "repositories.yaml")
+	f := v3repo.NewFile()
+	f.Add(&v3repo.Entry{Name: "helm-push-test", URL: ts.URL})
+	if err := f.WriteFile(repoFile, 0644); err != nil {
+		t.Fatal("unexpected error writing repo file", err)
 	}
 
-	f.Update(&entry)
-	os.MkdirAll(home.Repository(), 0777)
-	f.WriteFile(home.RepositoryFile(), 0644)
-
-	os.Setenv("HELM_HOME", home.String())
+	os.Setenv("HELM_REPOSITORY_CONFIG", repoFile)
+	defer os.Unsetenv("HELM_REPOSITORY_CONFIG")
 	os.Setenv("HELM_REPO_USERNAME", "myuser")
 	os.Setenv("HELM_REPO_PASSWORD", "mypass")
 

@@ -2,11 +2,11 @@ apiVersion: v1
 type: cli/v1
 runtime: subprocess
 name: "push-artifactory"
-version: "0.4.2"
+version: "1.1.0"
 config:
   usage: "push-artifactory"
   shortHelp: "Push helm charts to artifactory"
-  longHelp: "Please see https://github.com/belitre/helm-push-artifactory-plugin for usage"
+  longHelp: "Please see https://github.com/teejaded/helm-push-artifactory-plugin for usage"
   ignoreFlags: false
 runtimeConfig:
   platformCommand:

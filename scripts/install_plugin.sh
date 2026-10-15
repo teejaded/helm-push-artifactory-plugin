@@ -28,7 +28,7 @@ fi
 
 filename="helm-push-artifactory-v${version}-${osname}.tar.gz"
 
-url="https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v${version}/${filename}"
+url="https://github.com/teejaded/helm-push-artifactory-plugin/releases/download/v${version}/${filename}"
 
 echo $url
 

@@ -8,26 +8,28 @@ A Helm plugin to push helm charts to artifactory:
 
 ## Install
 
-__IMPORTANT: by default `helm plugin install` will install the version from the master branch, and that version is for Helm v2, if you are using Helm v3 please add `--version 1.0.1` (or the version you want to use) to your `helm plugin install` command. Also please always use the flag `--version` in your CI/CD system to avoid surprises when new changes are merged to master!__
+__IMPORTANT: version 1.1.0 and later is a Helm v4 plugin. If you are using Helm v2 or v3, use an older release (for example `--version v1.0.1`). Please always use the flag `--version` in your CI/CD system to avoid surprises when new changes are merged to master!__
+
+Helm v4 verifies plugin signatures by default, and plugins installed from a git URL can't be verified, so add `--verify=false` to the install commands below.
 
 Based on the version in `plugin.yaml`, release binary will be downloaded from GitHub:
 
 ```
-$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin
-Downloading and installing helm-push-artifactory v0.4.2 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.4.2/helm-push-artifactory_v0.4.2_darwin_amd64.tar.gz
+$ helm plugin install https://github.com/teejaded/helm-push-artifactory-plugin --verify=false
+Downloading and installing helm-push-artifactory v1.1.0 ...
+https://github.com/teejaded/helm-push-artifactory-plugin/releases/download/v1.1.0/helm-push-artifactory-v1.1.0-darwin-amd64.tar.gz
 Installed plugin: push-artifactory
 ```
 
 You can specify an specific version:
 ```
-$ helm plugin install https://github.com/belitre/helm-push-artifactory-plugin --version v0.3.0
-Downloading and installing helm-push-artifactory v0.3.0 ...
-https://github.com/belitre/helm-push-artifactory-plugin/releases/download/v0.3.0/helm-push-artifactory_v0.3.0_darwin_amd64.tar.gz
+$ helm plugin install https://github.com/teejaded/helm-push-artifactory-plugin --version v1.1.0 --verify=false
+Downloading and installing helm-push-artifactory v1.1.0 ...
+https://github.com/teejaded/helm-push-artifactory-plugin/releases/download/v1.1.0/helm-push-artifactory-v1.1.0-darwin-amd64.tar.gz
 Installed plugin: push-artifactory
 ```
 
-You can also download on one of the compressed files from [here](https://github.com/belitre/helm-push-artifactory-plugin/releases) and just extract it in your `$HELM_HOME/plugins/`
+You can also download on one of the compressed files from [here](https://github.com/teejaded/helm-push-artifactory-plugin/releases) and just extract it in your `$HELM_HOME/plugins/`
 
 __Important for windows users: I really don't know how to make the `helm plugin install` command work on Windows :D so please just download the zip and extract it on your `$HELM_HOME/plugins/ folder :)__
 

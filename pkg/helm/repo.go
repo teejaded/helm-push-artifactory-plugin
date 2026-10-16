@@ -45,3 +45,30 @@ func GetRepoEntryByName(name string) (*RepoEntry, error) {
 	}
 	return nil, fmt.Errorf("no repo named %q found", name)
 }
+
+// GetRepoEntryByURL finds the first repo entry whose URL matches the given URL.
+// Returns nil (no error) if no matching entry exists.
+func GetRepoEntryByURL(repoURL string) (*RepoEntry, error) {
+	if helmpush.HelmMajorVersionCurrent() == helmpush.HelmMajorVersion3 {
+		f, err := v3repo.LoadFile(v3cli.New().RepositoryConfig)
+		if err != nil {
+			return nil, err
+		}
+		for _, e := range f.Repositories {
+			if e.URL == repoURL {
+				return &RepoEntry{e.URL, e.Username, e.Password, e.CAFile, e.CertFile, e.KeyFile}, nil
+			}
+		}
+	} else {
+		f, err := v4repo.LoadFile(v4cli.New().RepositoryConfig)
+		if err != nil {
+			return nil, err
+		}
+		for _, e := range f.Repositories {
+			if e.URL == repoURL {
+				return &RepoEntry{e.URL, e.Username, e.Password, e.CAFile, e.CertFile, e.KeyFile}, nil
+			}
+		}
+	}
+	return nil, nil
+}

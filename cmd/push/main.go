@@ -126,10 +126,16 @@ func (p *pushCmd) push() error {
 	var entry *helm.RepoEntry
 	var err error
 
-	// If the argument looks like a URL, just use it directly.
+	// If the argument looks like a URL, validate it and also check whether it
+	// matches a named entry in the local helm repo config (so credentials are
+	// picked up automatically when the user passes a bare URL).
 	// Otherwise look it up by name in the local helm repo config.
 	if regexp.MustCompile(`^https?://`).MatchString(p.repository) {
 		_, err = url.ParseRequestURI(p.repository)
+		if err != nil {
+			return err
+		}
+		entry, err = helm.GetRepoEntryByURL(p.repository)
 	} else {
 		entry, err = helm.GetRepoEntryByName(p.repository)
 	}
